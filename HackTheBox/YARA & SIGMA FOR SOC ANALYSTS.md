@@ -1,5 +1,7 @@
 # Lab: YARA String Analysis & Rule Customization
 
+#Perform string analysis on the "DirectX.dll" sample that resides in the "/home/htb-student/Samples/YARASigma" directory of this section's target. Then, study the "apt_apt17_mal_sep17_1.yar" YARA rule that resides in the "/home/htb-student/Rules/yara" directory and replace "X.dll" with the correct DLL name to ensure the rule will identify "DirectX.dll". Enter the correct DLL name as your answer. Answer format: _.dll
+
 ## Objective
 - Perform string analysis on a suspicious DLL (`DirectX.dll`).
 - Study and modify an existing YARA rule (`apt_apt17_mal_sep17_1.yar`) so that it can correctly detect the malware sample.
