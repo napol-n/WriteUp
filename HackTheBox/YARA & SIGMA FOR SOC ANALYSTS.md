@@ -19,7 +19,7 @@
   - `yara` (test rules)  
 
 ### Step 1: Review the Original YARA Rule
-```yara
+yara
 rule APT17_Malware_Oct17_1 {
    meta:
       description = "Detects APT17 malware"
