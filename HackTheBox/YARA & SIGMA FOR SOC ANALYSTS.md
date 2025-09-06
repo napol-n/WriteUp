@@ -1,18 +1,26 @@
-Lab: Developing and Hunting with YARA
-Lab 1: Developing YARA Rules
-Objective
-Perform string analysis on a suspicious DLL (DirectX.dll).
-Study and modify an existing YARA rule (apt_apt17_mal_sep17_1.yar) to correctly detect the malware sample.
-Identify the correct DLL string to replace X.dll.
-Environment
-Target: /home/htb-student/Samples/YARASigma/DirectX.dll
-YARA Rules Directory: /home/htb-student/Rules/yara/
-Rule File: apt_apt17_mal_sep17_1.yar
-Tools Used:
-strings (extract printable strings)
-grep (filter .dll occurrences)
-yara (test rules)
-Step 1: Review the Original YARA Rule
+# Lab: Developing and Hunting with YARA
+
+---
+
+## Lab 1: Developing YARA Rules
+
+### Objective
+- Perform string analysis on a suspicious DLL (`DirectX.dll`).  
+- Study and modify an existing YARA rule (`apt_apt17_mal_sep17_1.yar`) to correctly detect the malware sample.  
+- Identify the correct DLL string to replace `X.dll`.
+
+### Environment
+- **Target:** `/home/htb-student/Samples/YARASigma/DirectX.dll`  
+- **YARA Rules Directory:** `/home/htb-student/Rules/yara/`  
+- **Rule File:** `apt_apt17_mal_sep17_1.yar`  
+- **Tools Used:**  
+  - `strings` (extract printable strings)  
+  - `grep` (filter `.dll` occurrences)  
+  - `yara` (test rules)  
+
+### Step 1: Review the Original YARA Rule
+
+```yara
 rule APT17_Malware_Oct17_1 {
    meta:
       description = "Detects APT17 malware"
@@ -26,6 +34,9 @@ rule APT17_Malware_Oct17_1 {
       ( uint16(0) == 0x5a4d and filesize < 500KB and all of them )
 }
 Note: $s4 is a placeholder and must be replaced with the correct DLL name.
+
+Step 2: Extract DLL Strings from the Sample
+strings /home/htb-student/Samples/YARASigma/DirectX.dll | grep -E '\.dll$'
 KERNEL32.dll
 ADVAPI32.dll
 MSVCRT.dll
@@ -35,10 +46,10 @@ kernel32.dll
 \spool\prtprocs\x64\localspl.dll
 \TSMSISrv.dll
 
-Step 3: Identify the Missing DLL
-Extracted all DLL strings from DirectX.dll.
-Verified which DLLs were already in the YARA rule (localspl.dll, msvcrt.dll).
-Identified TSMSISrv.dll as the missing DLL that should replace $s4.
+Step 3: Identify Missing DLL
+Verified DLLs already in the YARA rule: localspl.dll, msvcrt.dll
+Missing DLL to replace $s4: TSMSISrv.dll
+
 Answer:
 TSMSISrv.dll
 
@@ -64,13 +75,13 @@ rule shell_detected
         $domain and $sandbox
 }
 
-Updating the $sandbox Variable
+Step 2: Update $sandbox Variable
 Purpose: Detect "Sandbox detected" in process memory.
-Convert the string into hexadecimal for YARA:
+Convert string to hexadecimal for YARA
 "Sandbox detected".encode('utf-8').hex()
-53616e64626f78206465746563746564
+# Output: 53616e64626f78206465746563746564
 
-Update the rule with the hex value:
+Update the rule:
 rule shell_detected
 {
     meta:
@@ -86,10 +97,14 @@ rule shell_detected
 }
 
 Explanation
-$domain: Hex pattern representing iuqerfsodp9ifjaposdfjhgosurijfaewrrwergwea.com.
-$sandbox: Hex pattern for the string "Sandbox detected".
-condition: Requires both patterns to appear in memory for the rule to match.
-
+$domain: Hex pattern for iuqerfsodp9ifjaposdfjhgosurijfaewrrwergwea.com
+$sandbox: Hex pattern for "Sandbox detected"
+condition: Both patterns must be present in memory for the rule to trigger
 Answer
 53616e64626f78206465746563746564
+
+
+
+
+
 
