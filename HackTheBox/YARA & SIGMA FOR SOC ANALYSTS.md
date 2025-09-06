@@ -2,15 +2,10 @@
 
 This repository contains comprehensive lab exercises for developing YARA rules and conducting malware hunting operations using YARA signatures.
 
-## Table of Contents
-- [Lab 1: Developing YARA Rules](#lab-1-developing-yara-rules)
-- [Lab 2: Hunting Evil with YARA (Windows Edition)](#lab-2-hunting-evil-with-yara-windows-edition)
-- [Tools and Requirements](#tools-and-requirements)
-- [Additional Resources](#additional-resources)
-
 ---
 
 ## Lab 1: Developing YARA Rules
+Perform string analysis on the "DirectX.dll" sample that resides in the "/home/htb-student/Samples/YARASigma" directory of this section's target. Then, study the "apt_apt17_mal_sep17_1.yar" YARA rule that resides in the "/home/htb-student/Rules/yara" directory and replace "X.dll" with the correct DLL name to ensure the rule will identify "DirectX.dll". Enter the correct DLL name as your answer. Answer format: _.dll
 
 ### 🎯 Objective
 - Perform string analysis on a suspicious DLL (`DirectX.dll`)
@@ -93,6 +88,7 @@ rule APT17_Malware_Oct17_1 {
 ---
 
 ## Lab 2: Hunting Evil with YARA (Windows Edition)
+Study the "C:\Rules\yara\shell_detector.yar" YARA rule that aims to detect "C:\Samples\MalwareAnalysis\shell.exe" inside process memory. Then, specify the appropriate hex values inside the "$sandbox" variable to ensure that the "Sandbox detected" message will also be detected. Enter the correct hex values as your answer. Answer format: Remove any spaces
 
 ### 🎯 Objective
 - Study and configure a YARA rule (`shell_detector.yar`) to detect specific strings in process memory
@@ -215,6 +211,7 @@ Feel free to submit issues and enhancement requests!
 ---
 
 ## Lab 3: Hunting Evil with YARA (Linux Edition)
+Study the following resource https://blogs.vmware.com/security/2022/09/threat-report-illuminating-volume-shadow-deletion.html to learn how WannaCry performs shadow volume deletion. Then, use yarascan when analyzing "/home/htb-student/MemoryDumps/compromised_system.raw" to identify the process responsible for deleting shadows. Enter the name of the process as your answer.
 
 ### 🎯 Objective
 Identify the process responsible for deleting shadow volumes on a compromised Windows system by:
