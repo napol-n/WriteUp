@@ -212,6 +212,139 @@ This lab guide is provided for educational purposes. Please ensure you have prop
 ## 🤝 Contributing
 Feel free to submit issues and enhancement requests!
 
+---
+
+## Lab 3: Hunting Evil with YARA (Linux Edition)
+
+### 🎯 Objective
+Identify the process responsible for deleting shadow volumes on a compromised Windows system by:
+- Understanding how WannaCry ransomware performs shadow volume deletion
+- Using the `ShadowVolumeDeletion` YARA rule to detect shadow deletion commands
+- Scanning a memory dump with Volatility to identify the malicious process
+
+### 🔧 Environment Setup
+- **Memory Dump:** `/home/htb-student/MemoryDumps/compromised_system.raw`
+- **YARA Rules Directory:** `/home/htb-student/Rules/yara/`
+- **Reference Article:** [VMware Threat Report - Illuminating Volume Shadow Deletion](https://blogs.vmware.com/security/2022/09/threat-report-illuminating-volume-shadow-deletion.html)
+
+### 📋 Tools Required
+- **Volatility** - Memory analysis framework
+- **YARA** - Pattern matching engine
+
+### Step 1: Understanding Shadow Volume Deletion
+
+WannaCry ransomware deletes shadow copies to prevent file recovery using these common commands:
+
+```cmd
+vssadmin delete shadows
+vssadmin delete shadows /all
+wmic shadowcopy delete
+wmic shadowcopy delete /all
+```
+
+> **💡 Why This Matters:** Shadow copies are Windows' backup mechanism that allows users to recover previous versions of files. By deleting them, ransomware ensures victims cannot easily recover their encrypted data.
+
+### Step 2: Create the YARA Rule
+
+Create `shadow_volume_deletion.yar` in the rules directory:
+
+```yara
+rule ShadowVolumeDeletion
+{
+    meta:
+        description = "Detects shadow volume deletion activities"
+        author = "Fares Morcy"
+        last_modified = "2024-04-03"
+
+    strings:
+        $vssadmin_delete = "vssadmin delete shadows"
+        $vssadmin_delete_all = "vssadmin delete shadows /all"
+        $wmic_shadow_delete = "wmic shadowcopy delete"
+        $wmic_shadow_delete_all = "wmic shadowcopy delete /all"
+        $cmd_args = "-delete"
+
+    condition:
+        any of ($vssadmin_delete, $vssadmin_delete_all, $wmic_shadow_delete, $wmic_shadow_delete_all) or
+        any of ($cmd_args)
+}
+```
+
+**Rule Components:**
+- **`$vssadmin_delete*`:** Detects VSS Admin commands for shadow deletion
+- **`$wmic_shadow*`:** Detects WMI commands for shadow copy deletion  
+- **`$cmd_args`:** Generic detection for any `-delete` argument
+- **`condition`:** Triggers if any shadow deletion command is found
+
+> **📝 Credit:** This rule was adapted from [Fares Morcy's GitBook on SOC analysis](https://faresmorcy.gitbook.io/cybersecurity-blue-team)
+
+### Step 3: Scan Memory with Volatility
+
+Execute the memory analysis command:
+
+```bash
+vol.py -f /home/htb-student/MemoryDumps/compromised_system.raw yarascan -y /home/htb-student/Rules/yara/shadow_volume_deletion.yar
+```
+
+**Command Breakdown:**
+- `vol.py` - Volatility framework
+- `-f` - Specify memory dump file
+- `yarascan` - Use YARA scanning plugin
+- `-y` - Specify YARA rule file
+
+### Step 4: Analyze the Output
+
+**Example Output:**
+```
+Rule: ShadowVolumeDeletion 
+Owner: Process @WanaDecryptor@ Pid 3200 
+0x00420fdb 76 73 73 61 64 6d 69 6e 20 64 65 6c 65 74 65 20 vssadmin.delete. 
+0x00420feb 73 68 61 64 6f 77 73 20 2f 61 6c 6c 20 2f 71 75 shadows./all./qu 
+...
+```
+
+**Interpretation:**
+- **`Rule: ShadowVolumeDeletion`** - YARA rule that triggered
+- **`Owner: Process @WanaDecryptor@`** - The malicious process performing shadow volume deletion
+- **`Pid 3200`** - Process ID of the malicious process
+- **Hex dump** - Shows the actual command: `vssadmin delete shadows /all /qu`
+
+### Step 5: Understanding the Attack Pattern
+
+**WannaCry's Shadow Deletion Strategy:**
+1. **Execute shadow deletion commands** to prevent file recovery
+2. **Use `/all` flag** to delete all shadow copies
+3. **Use `/quiet` flag** to suppress user prompts
+4. **Run from renamed executable** (`@WanaDecryptor@`) to evade basic detection
+
+### 🔍 Advanced Analysis Tips
+
+**Additional Volatility Commands:**
+```bash
+# Get process information
+vol.py -f compromised_system.raw pslist | grep -i wana
+
+# Check process tree
+vol.py -f compromised_system.raw pstree | grep -i wana
+
+# Extract process executable
+vol.py -f compromised_system.raw procdump -p 3200 --dump-dir ./output/
+```
+
+### 🎉 Answer
+**Process Name:** `@WanaDecryptor@`
+
+### 📊 Lab Summary
+
+| Component | Value |
+|-----------|-------|
+| **Malicious Process** | `@WanaDecryptor@` |
+| **Process ID** | `3200` |
+| **Detection Method** | YARA rule + Volatility yarascan |
+| **Command Detected** | `vssadmin delete shadows /all` |
+| **Threat Type** | WannaCry Ransomware |
+
+---
+
 ## ⚠️ Disclaimer
 - These labs focus on configuring YARA rules for educational purposes
 - Testing against actual malware should be done in controlled environments
