@@ -272,7 +272,7 @@ rule ShadowVolumeDeletion
 - **`$cmd_args`:** Generic detection for any `-delete` argument
 - **`condition`:** Triggers if any shadow deletion command is found
 
-> **📝 Credit:** This rule was adapted from [Fares Morcy's GitBook on SOC analysis](https://faresmorcy.gitbook.io/cybersecurity-blue-team)
+> **📝 Credit:** This rule was adapted from [[Fares Morcy's GitBook on SOC analysis](https://faresmorcy.gitbook.io/cybersecurity-blue-team)](https://faresbltagy.gitbook.io/footprintinglabs/soc-hackthebox-notes-and-labs/yara-and-sigma-for-soc-analysts-module/hunting-evil-with-yara-linux-edition)
 
 ### Step 3: Scan Memory with Volatility
 
