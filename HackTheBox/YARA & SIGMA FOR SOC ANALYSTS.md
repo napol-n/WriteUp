@@ -1,4 +1,4 @@
-# Lab: YARA String Analysis & Rule Customization
+# Lab:  Developing YARA Rules
 
 #Perform string analysis on the "DirectX.dll" sample that resides in the "/home/htb-student/Samples/YARASigma" directory of this section's target. Then, study the "apt_apt17_mal_sep17_1.yar" YARA rule that resides in the "/home/htb-student/Rules/yara" directory and replace "X.dll" with the correct DLL name to ensure the rule will identify "DirectX.dll". Enter the correct DLL name as your answer. Answer format: _.dll
 
@@ -60,3 +60,63 @@ The missing DLL is TSMSISrv.dll.
 
 Answer
 TSMSISrv.dll
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+## Lab: Hunting Evil with YARA (Windows Edition)
+
+## Objective
+- Study and configure a YARA rule (`shell_detector.yar`) to detect specific strings in process memory.  
+- The rule focuses on detecting:
+  1. A hardcoded domain in memory.
+  2. The message `"Sandbox detected"` in memory.
+
+---
+
+## YARA Rule Location
+C:\Rules\yara\shell_detector.yar
+
+### Original Rule
+```yara
+rule shell_detected
+{
+    meta:
+        description = "Detect Domain & Sandbox Message In Process Memory"
+        author      = "Dimitrios Bougioukas"
+
+    strings:
+        $domain   = { 69 75 71 65 72 66 73 6f 64 70 39 69 66 6a 61 70 6f 73 64 66 6a 68 67 6f 73 75 72 69 6a 66 61 65 77 72 77 65 72 67 77 65 61 2e 63 6f 6d }
+        $sandbox  = {  }
+
+    condition:
+        $domain and $sandbox
+}
+
+Updating the $sandbox Variable
+Purpose: Detect the string "Sandbox detected" in process memory.
+Convert the string to hexadecimal suitable for YARA:
+"Sandbox detected".encode('utf-8').hex()
+# Output: 53616e64626f78206465746563746564
+
+Remove spaces and update the rule:
+rule shell_detected
+{
+    meta:
+        description = "Detect Domain & Sandbox Message In Process Memory"
+        author      = "Dimitrios Bougioukas"
+
+    strings:
+        $domain   = { 69 75 71 65 72 66 73 6f 64 70 39 69 66 6a 61 70 6f 73 64 66 6a 68 67 6f 73 75 72 69 6a 66 61 65 77 72 77 65 72 67 77 65 61 2e 63 6f 6d }
+        $sandbox  = { 53616e64626f78206465746563746564 }
+
+    condition:
+        $domain and $sandbox
+}
+Explanation of Rule Components
+$domain: Hex pattern for the hardcoded domain iuqerfsodp9ifjaposdfjhgosurijfaewrrwergwea.com
+$sandbox: Hex pattern for the string "Sandbox detected"
+condition: Requires both patterns to be present in memory for a match.
+
+Answer
+53616e64626f78206465746563746564
+
+
