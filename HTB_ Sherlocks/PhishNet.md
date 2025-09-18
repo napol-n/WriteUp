@@ -1,5 +1,5 @@
 # PhishNet
-![Screenshot](https://github.com/yourusername/yourrepo/blob/main/images/screenshot.png?raw=true)
+Screenshot 2025-09-18 at 11.03.21 PM.png → screenshot.png
 
 
 ## PhishNet Sherlock Challenge - Complete Writeup
