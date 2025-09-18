@@ -1,5 +1,5 @@
 # PhishNet
-Screenshot 2025-09-18 at 11.03.21 PM.png → screenshot.png
+![Uploading Screenshot 2025-09-18 at 11.03.21 PM.png…]()
 
 
 ## PhishNet Sherlock Challenge - Complete Writeup
