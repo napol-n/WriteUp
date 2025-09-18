@@ -1,5 +1,5 @@
 # PhishNet
-![Screenshot](images/Screenshot%202025-09-18%20at%2011.03.21%E2%80%AFPM.png)
+![Screenshot](https://github.com/yourusername/yourrepo/blob/main/images/screenshot.png?raw=true)
 
 
 ## PhishNet Sherlock Challenge - Complete Writeup
