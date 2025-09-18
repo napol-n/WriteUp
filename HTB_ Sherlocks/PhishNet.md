@@ -1,6 +1,7 @@
 # PhishNet
-![Uploading Screenshot 2025-09-18 at 11.03.21 PM.png…]()
+![Screenshot](images/Screenshot%202025-09-18%20at%2011.03.21%E2%80%AFPM.png)
 
+Screenshot 2025-09-18 at 11.03.21 PM.PNG
 
 ## PhishNet Sherlock Challenge - Complete Writeup
 
